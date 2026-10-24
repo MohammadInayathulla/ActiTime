@@ -5,6 +5,7 @@ import java.time.Duration;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.Reporter;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
@@ -20,10 +21,22 @@ public class BaseClass {
     @BeforeTest
     public void openBrowser() {
         Reporter.log("openBrowser", true);
-        driver = new ChromeDriver();
-        driver.manage().window().maximize();
+
+        boolean headless = Boolean.parseBoolean(System.getProperty("headless", "false"));
+        ChromeOptions options = new ChromeOptions();
+        if (headless) {
+            options.addArguments("--headless=new", "--window-size=1920,1080");
+        }
+        driver = new ChromeDriver(options);
+
+        if (!headless) {
+            driver.manage().window().maximize();
+        }
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
     }
+
+ 
+
     @BeforeMethod
     public void login() throws IOException, InterruptedException {
         Reporter.log("login", true);
